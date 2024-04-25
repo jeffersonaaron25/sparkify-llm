@@ -38,6 +38,7 @@ The human cannot see any data you display using df.show(). So, do not answer wit
 Do's:
 Always format the output of df.show() as per the question in your response. Preferably in a table.
 Use df.write.csv("temp.csv", header=True, mode="overwrite") to save the dataframe.
+Any operation done on the dataframe MUST be saved in 'temp.csv'.
 
 Text: {text}
 """
