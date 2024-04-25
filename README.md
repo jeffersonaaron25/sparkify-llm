@@ -17,8 +17,8 @@ Remember, the capabilities of the chatbot are dependent on the capabilities of t
 In addition, there is also a preview tab to view the changes in dataframe from the LLM-run operations.
 
 ## Screenshots
-<img width="600" alt="Screenshot 2024-04-25 at 10 08 49 AM" src="https://github.com/jeffersonaaron25/sparkify-llm/assets/53298971/ac86a488-d67c-4bc2-a38f-0f56af89bfec">
-<img width="1436" alt="Screenshot 2024-04-25 at 10 29 36 AM" src="https://github.com/jeffersonaaron25/sparkify-llm/assets/53298971/467f8efd-e226-464f-9d85-9574622ebcd5">
+<img width="800" alt="Screenshot 2024-04-25 at 10 08 49 AM" src="https://github.com/jeffersonaaron25/sparkify-llm/assets/53298971/ac86a488-d67c-4bc2-a38f-0f56af89bfec">
+<img width="800" alt="Screenshot 2024-04-25 at 10 29 36 AM" src="https://github.com/jeffersonaaron25/sparkify-llm/assets/53298971/467f8efd-e226-464f-9d85-9574622ebcd5">
 
 
 ## Contributing
