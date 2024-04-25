@@ -110,9 +110,10 @@ When instructing sparkify tool, you must use the following rules:
             {
                 "input": user_input,
             },
-            {"configurable": {"session_id": "TEST"}},
+            {"configurable": {"session_id": "streamlit-llm-session"}},
         )['output']
         progress.progress(80, "Putting things together...")
+        # Read the temp dataframe and save it in session state after Sparkify operation
         st.session_state.temp_df = spark.read.csv("temp.csv", header=True, inferSchema=True)
         progress.progress(100, "Done!") 
         return res
