@@ -1,0 +1,6 @@
+pyspark
+langchain
+langchain_openai
+langchain_experimental
+streamlit
+watchdog
