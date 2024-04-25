@@ -1,6 +1,6 @@
 # SparkifyLLM
 
-This project contains a Language Learning Model (LLM) implementation that uses the GPT-4 model from OpenAI and integrates with PySpark using LangChain for data processing tasks. Try it [here!](https://sparkify-llm.streamlit.app) (You need an OPENAI API Key)
+This project contains a Language Learning Model (LLM) implementation that uses the GPT-4 model from OpenAI and integrates with PySpark using LangChain for data processing tasks. Try it [here!](https://sparkify-llm.streamlit.app) (You need an OpenAI API Key)
 
 ## Overview
 
