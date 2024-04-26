@@ -69,6 +69,7 @@ if 'temp_df' not in st.session_state:
 if "df" not in st.session_state or (
     "df" in st.session_state and st.session_state.df is None
     ):
+    st.markdown("<p style='color: grey; margin-top: -10px;'>From Jefferson | <a href='https://github.com/jeffersonaaron25'>GitHub</a> | <a href='https://www.linkedin.com/in/jeffersonaaron/'>LinkedIn</a></p>", unsafe_allow_html=True)
     # Load the file if df is not in session state
     success = upload.get_upload()
     if success:
