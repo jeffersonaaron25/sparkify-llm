@@ -8,7 +8,7 @@ if not spark:
     spark = SparkSession.builder.getOrCreate()
 
 def get_upload():
-    file = st.file_uploader("Upload a CSV file", type=["csv"])
+    file = st.file_uploader("Upload a CSV file to get started", type=["csv"])
     if file:
         try:
             # remove previous files
