@@ -39,8 +39,10 @@ def get_upload():
                 os.environ["OPENAI_API_KEY"] = api_key
                 st.session_state.df = df
                 st.session_state.scratch_df = df
-                df.write.csv("temp.csv", header=True, mode="overwrite")
+                # scratch is displayed on the right side of the screen, sparkify saved data to scratch
                 df.write.csv("scratch.csv", header=True, mode="overwrite")
+                # temp is used to store the current state of the dataframe, temp is fed into sparkify
+                df.write.csv("temp.csv", header=True, mode="overwrite")
                 return True
         except Exception as e:
             st.error("Error loading file. Please check the file path and try again.")
