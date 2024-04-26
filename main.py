@@ -92,21 +92,13 @@ if "df" in st.session_state and st.session_state.df:
         b1, b2, b3 = st.sidebar.columns(3)
         with b1:
             if st.button("Reset Scratch", type='secondary', use_container_width=True):
-                try:
-                    st.session_state.scratch_df = st.session_state.spark.read.csv("temp.csv", header=True, inferSchema=True)
-                    st.toast('Scratch reset successful!')
-                except:
-                    st.toast('Error resetting scratch! If this persists, consider restarting session.')
+                st.session_state.scratch_df = st.session_state.spark.read.csv("temp.csv", header=True, inferSchema=True)
                 st.rerun()
         with b2:
             if st.button("Reset Scratch from Source", type='secondary', use_container_width=True):
-                try:
-                    st.session_state.scratch_df = st.session_state.df
-                    st.session_state.df.write.csv("scratch.csv", header=True, mode="overwrite")
-                    st.session_state.df.write.csv("temp.csv", header=True, mode="overwrite")
-                    st.toast('Scratch reset successful!')
-                except:
-                    st.toast('Error resetting scratch! If this persists, consider restarting session.')
+                st.session_state.scratch_df = st.session_state.df
+                st.session_state.df.write.csv("scratch.csv", header=True, mode="overwrite")
+                st.session_state.df.write.csv("temp.csv", header=True, mode="overwrite")
                 st.rerun()
         with b3:
             if st.button("Save Scratch", type='primary', use_container_width=True):

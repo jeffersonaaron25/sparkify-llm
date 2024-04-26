@@ -10,14 +10,15 @@ import streamlit as st
 
 _progress = None
 spark = SparkSession.getActiveSession()
-if not spark:
-    spark = st.session_state.spark
 
 @tool
 def sparkify(text):
     """Run spark tool"""
     try:
         global _progress
+        global spark
+        if not spark:
+            spark = st.session_state.spark
         _progress.progress(60, "Working on it...")
         _df = spark.read.csv('temp.csv', header=True, inferSchema=True)
         spark_tool = create_spark_dataframe_agent(llm=ChatOpenAI(temperature=0, model="gpt-4-turbo"), df=_df, verbose=False)
@@ -105,7 +106,10 @@ When instructing sparkify tool, you must use the following rules:
     
     def get_llm_response(self, user_input, progress):
         global _progress
+        global spark
         _progress = progress
+        if not spark:
+            spark = st.session_state.spark
         res = self.conversational_agent_executor.invoke(
             {
                 "input": user_input,
