@@ -110,6 +110,9 @@ When instructing sparkify tool, you must use the following rules:
         _progress = progress
         if not spark:
             spark = st.session_state.spark
+            if not spark:
+                spark = SparkSession.builder.getOrCreate()
+                st.session_state.spark = spark
         res = self.conversational_agent_executor.invoke(
             {
                 "input": user_input,
