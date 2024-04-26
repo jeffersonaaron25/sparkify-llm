@@ -19,10 +19,10 @@ def sparkify(text):
     try:
         global _progress
         _progress.progress(60, "Working on it...")
-        _df = spark.read.csv('scratch.csv', header=True, inferSchema=True)
+        _df = spark.read.csv('temp.csv', header=True, inferSchema=True)
         spark_tool = create_spark_dataframe_agent(llm=ChatOpenAI(temperature=0, model="gpt-4-turbo"), df=_df, verbose=False)
         instruct_prompt = f"""
-You are Sparkify, a PySpark expert and executor. You can use the spark dataframe 'df' to answer questions about the data. You must save the dataframe to a temp file 'temp.csv' after the operation.
+You are Sparkify, a PySpark expert and executor. You can use the spark dataframe 'df' to answer questions about the data. You must save the dataframe to a temp file 'scratch.csv' after the operation.
 Follow all the rules below, you cannot deviate from them ever.
 
 Rules:
@@ -32,13 +32,13 @@ Rules:
 4. You must provide output from df in the response if required by the question.
 
 Dont's:
-Respond "The analysis has been saved in a file named 'temp.csv'." if question requires the output.
+Respond "The analysis has been saved in a file named 'scratch.csv'." if question requires the output.
 The human cannot see any data you display using df.show(). So, do not answer with respect to that.
 
 Do's:
 Always format the output of df.show() as per the question in your response. Preferably in a table.
-Use df.write.csv("temp.csv", header=True, mode="overwrite") to save the dataframe.
-Any operation done on the dataframe MUST be saved in 'temp.csv'.
+Use df.write.csv("scratch.csv", header=True, mode="overwrite") to save the dataframe.
+Any operation done on the dataframe MUST be saved in 'scratch.csv'.
 
 Text: {text}
 """
@@ -99,7 +99,7 @@ When instructing sparkify tool, you must use the following rules:
 5. Do not omit any information from human's question when instructing sparkify.
 6. Do not ask ANY excess information from human without making sure it cannot be answered by the dataframe.
 7. Sometimes human might not explain the question properly, you may ask for clarification if needed.
-8. Refer to temp.csv as 'Scratch' in your responses.
+8. Refer to scratch.csv as 'Scratch' in your responses.
 """
         return systemn_prompt
     
@@ -114,6 +114,6 @@ When instructing sparkify tool, you must use the following rules:
         )['output']
         progress.progress(80, "Putting things together...")
         # Read the temp dataframe and save it in session state after Sparkify operation
-        st.session_state.temp_df = spark.read.csv("temp.csv", header=True, inferSchema=True)
+        st.session_state.temp_df = spark.read.csv("scratch.csv", header=True, inferSchema=True)
         progress.progress(100, "Done!") 
         return res

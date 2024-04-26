@@ -31,6 +31,27 @@ st.markdown(
         unsafe_allow_html=True
     )
 
+# Adjust page and sidebar width
+st.markdown(
+    """
+    <style>
+        section[data-testid="stSidebar"] {
+            width: 50% !important;
+            max-width: 50% !important; # Set the width to your desired value
+        }
+        button[data-testid="baseButton-header"] {
+            display: none;
+        }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
+st.markdown("""
+    <style>
+        section.main > div {max-width:60rem}
+    </style>
+    """, unsafe_allow_html=True)
+
 st.title("SparkifyLLM")
 
 # Initialize session state
@@ -62,11 +83,11 @@ if "df" in st.session_state and st.session_state.df:
 
     preview_scratch = st.sidebar.toggle('Scratch', True)
     if preview_scratch:
-        st.sidebar.dataframe(st.session_state.temp_df)
+        st.sidebar.dataframe(st.session_state.temp_df, use_container_width=True)
         st.sidebar.markdown("<p style='text-align: center; color: grey; margin-top: -10px;'>Scratch</p>", unsafe_allow_html=True)
         st.sidebar.markdown("<p style='text-align: center; font-size: 10px; color: grey; margin-top: -15px;'>To keep changes for following queries, save the scratch dataframe.</p>", unsafe_allow_html=True)
         if st.sidebar.button("Save Scratch Dataframe", type='primary', use_container_width=True):
-            st.session_state.temp_df.write.csv("scratch.csv", header=True, mode="overwrite")
+            st.session_state.temp_df.write.csv("temp.csv", header=True, mode="overwrite")
             st.toast('Scratch saved!')
     else:
         st.sidebar.dataframe(st.session_state.df)

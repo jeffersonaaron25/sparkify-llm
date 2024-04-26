@@ -12,8 +12,8 @@ def get_upload():
     if file:
         try:
             # remove previous files
-            shutil.rmtree('scratch.csv')
             shutil.rmtree('temp.csv')
+            shutil.rmtree('scratch.csv')
             shutil.rmtree('sparkify')
         except:
             pass
@@ -29,7 +29,7 @@ def get_upload():
                 df = spark.read.csv(file_name, header=True, inferSchema=True)
             st.session_state.file_path = file_name
             st.success("File loaded and converted to Spark DataFrame successfully!")
-            st.dataframe(df, width=600, height=350)
+            st.dataframe(df, width=600, height=350, use_container_width=True)
             api_key = st.text_input("Enter OpenAI API Key to Start Chat")
             st.write("Don't have an API Key? Get one [here](https://platform.openai.com/signup). We do not store your API Key.")
             st.markdown("<br />", unsafe_allow_html=True)
@@ -37,8 +37,8 @@ def get_upload():
                 os.environ["OPENAI_API_KEY"] = api_key
                 st.session_state.df = df
                 st.session_state.temp_df = df
-                df.write.csv("scratch.csv", header=True, mode="overwrite")
                 df.write.csv("temp.csv", header=True, mode="overwrite")
+                df.write.csv("scratch.csv", header=True, mode="overwrite")
                 return True
         except Exception as e:
             st.error("Error loading file. Please check the file path and try again.")
