@@ -6,6 +6,7 @@ import os
 spark = SparkSession.getActiveSession()
 if not spark:
     spark = SparkSession.builder.getOrCreate()
+    st.session_state.spark = spark
 
 def get_upload():
     file = st.file_uploader("Upload a CSV file to get started", type=["csv"])
@@ -29,14 +30,15 @@ def get_upload():
                 df = spark.read.csv(file_name, header=True, inferSchema=True)
             st.session_state.file_path = file_name
             st.success("File loaded and converted to Spark DataFrame successfully!")
-            st.dataframe(df, width=600, height=350, use_container_width=True)
+            st.write("Data Preview (Upto First 10 Rows)")
+            st.dataframe(df.limit(1000), width=600, height=350, use_container_width=True)
             api_key = st.text_input("Enter OpenAI API Key to Start Chat")
             st.write("Don't have an API Key? Get one [here](https://platform.openai.com/signup). We do not store your API Key.")
             st.markdown("<br />", unsafe_allow_html=True)
             if api_key and st.session_state.df is None:
                 os.environ["OPENAI_API_KEY"] = api_key
                 st.session_state.df = df
-                st.session_state.temp_df = df
+                st.session_state.scratch_df = df
                 df.write.csv("temp.csv", header=True, mode="overwrite")
                 df.write.csv("scratch.csv", header=True, mode="overwrite")
                 return True

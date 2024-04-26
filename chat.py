@@ -7,7 +7,7 @@ def app(llm):
         # Reset session state
         st.session_state.chat_history = []
         st.session_state.df = None
-        st.session_state.temp_df = None
+        st.session_state.scratch_df = None
         st.session_state.llm = None
         st.session_state.turn = 0
         try:

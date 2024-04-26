@@ -11,7 +11,7 @@ import streamlit as st
 _progress = None
 spark = SparkSession.getActiveSession()
 if not spark:
-    spark = SparkSession.builder.getOrCreate()
+    spark = st.session_state.spark
 
 @tool
 def sparkify(text):
@@ -114,6 +114,6 @@ When instructing sparkify tool, you must use the following rules:
         )['output']
         progress.progress(80, "Putting things together...")
         # Read the temp dataframe and save it in session state after Sparkify operation
-        st.session_state.temp_df = spark.read.csv("scratch.csv", header=True, inferSchema=True)
+        st.session_state.scratch_df = spark.read.csv("scratch.csv", header=True, inferSchema=True)
         progress.progress(100, "Done!") 
         return res

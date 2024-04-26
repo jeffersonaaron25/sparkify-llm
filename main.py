@@ -63,8 +63,10 @@ if 'turn' not in st.session_state:
     st.session_state.turn = 0
 if 'df' not in st.session_state:
     st.session_state.df = None
-if 'temp_df' not in st.session_state:
-    st.session_state.temp_df = None
+if 'scratch_df' not in st.session_state:
+    st.session_state.scratch_df = None
+if 'spark' not in st.session_state:
+    st.session_state.spark = None
 
 if "df" not in st.session_state or (
     "df" in st.session_state and st.session_state.df is None
@@ -78,18 +80,42 @@ if "df" not in st.session_state or (
 
 if "df" in st.session_state and st.session_state.df:
     # sidebar for data preview
-    st.sidebar.header("Data Preview", divider='red')
+    st.sidebar.header("Data Preview (Upto First 1000 Rows)", divider='red')
     st.sidebar.markdown("<p style='font-size:14px; color: grey; margin-top: -10px;'>Click to toggle between source and scratch dataframes</p>", unsafe_allow_html=True)
     st.sidebar.markdown("<p style='font-size:14px; color: grey; margin-top: -15px;'>Source: Data loaded from the CSV file. Scratch: Data after operations.</p>", unsafe_allow_html=True)
 
     preview_scratch = st.sidebar.toggle('Scratch', True)
     if preview_scratch:
-        st.sidebar.dataframe(st.session_state.temp_df, use_container_width=True)
+        st.sidebar.dataframe(st.session_state.scratch_df.limit(1000), use_container_width=True)
         st.sidebar.markdown("<p style='text-align: center; color: grey; margin-top: -10px;'>Scratch</p>", unsafe_allow_html=True)
         st.sidebar.markdown("<p style='text-align: center; font-size: 10px; color: grey; margin-top: -15px;'>To keep changes for following queries, save the scratch dataframe.</p>", unsafe_allow_html=True)
-        if st.sidebar.button("Save Scratch Dataframe", type='primary', use_container_width=True):
-            st.session_state.temp_df.write.csv("temp.csv", header=True, mode="overwrite")
-            st.toast('Scratch saved!')
+        b1, b2, b3 = st.sidebar.columns(3)
+        with b1:
+            if st.button("Reset Scratch", type='secondary', use_container_width=True):
+                try:
+                    st.session_state.scratch_df = st.session_state.spark.read.csv("temp.csv", header=True, inferSchema=True)
+                    st.toast('Scratch reset successful!')
+                except:
+                    st.toast('Error resetting scratch! If this persists, consider restarting session.')
+                st.rerun()
+        with b2:
+            if st.button("Reset Scratch from Source", type='secondary', use_container_width=True):
+                try:
+                    st.session_state.scratch_df = st.session_state.df
+                    st.session_state.df.write.csv("scratch.csv", header=True, mode="overwrite")
+                    st.session_state.df.write.csv("temp.csv", header=True, mode="overwrite")
+                    st.toast('Scratch reset successful!')
+                except:
+                    st.toast('Error resetting scratch! If this persists, consider restarting session.')
+                st.rerun()
+        with b3:
+            if st.button("Save Scratch", type='primary', use_container_width=True):
+                try:
+                    st.session_state.scratch_df.write.csv("temp.csv", header=True, mode="overwrite")
+                    st.toast('Scratch saved!')
+                except:
+                    st.error('Error saving scratch! If this persists, consider restarting session.')
+        
     else:
         st.sidebar.dataframe(st.session_state.df)
         st.sidebar.markdown("<p style='text-align: center; color: grey; margin-top: -10px;'>Source</p>", unsafe_allow_html=True)
