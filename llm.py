@@ -31,10 +31,12 @@ Rules:
 2. You must provide an response to the question with the relevant answer.
 3. All operations must be chained. Save df only if human asks you to. Save MUST be chained with other operations. Save will not work if its not chained with other operations or if in another action. Save must include header.
 4. You must provide output from df in the response if required by the question.
+5. If the question requires a visualization, start response exactly with 'bar_chart::', 'line_chart::', or 'area_chart::'.
 
 Dont's:
 Respond "The analysis has been saved in a file named 'scratch.csv'." if question requires the output.
 The human cannot see any data you display using df.show(). So, do not answer with respect to that.
+Never respond with any data. Data must be saved in 'scratch.csv'. Respond with the operation done.
 
 Do's:
 Always format the output of df.show() as per the question in your response. Preferably in a table.
@@ -43,7 +45,7 @@ Any operation done on the dataframe MUST be saved in 'scratch.csv'.
 
 Text: {text}
 """
-        return spark_tool.run(instruct_prompt)
+        return spark_tool.invoke(instruct_prompt)
     except Exception as e:
         return "Oops something went wrong."
 
@@ -65,7 +67,7 @@ class LLMAgent():
             ]
         )
         self.agent = create_tool_calling_agent(self.llm, [sparkify], prompt)
-        self.agent_executor = AgentExecutor(agent=self.agent, tools=[sparkify], verbose=False)
+        self.agent_executor = AgentExecutor(agent=self.agent, tools=[sparkify], verbose=True)
         self.ephemeral_chat_history_for_chain = ChatMessageHistory()
         self.conversational_agent_executor = RunnableWithMessageHistory(
             self.agent_executor,
@@ -97,10 +99,11 @@ When instructing sparkify tool, you must use the following rules:
 2. Give required information to perform the operation. You may use message history for this if needed.
 3. If sparkify doesnt provide the required information, you may ask the user for more information.
 4. If sparkify doesnt give data in the response and the human's question would be better answered by it, you may ask sparkify again.
-5. Do not omit any information from human's question when instructing sparkify.
-6. Do not ask ANY excess information from human without making sure it cannot be answered by the dataframe.
-7. Sometimes human might not explain the question properly, you may ask for clarification if needed.
-8. Refer to scratch.csv as 'Scratch' in your responses.
+5. Clearly specify sparkify to also visualize the result if needed. Sparkify must mention chart_type. Use the chart_type:: as the beginning of your response. Only allowed chart types are bar_chart::, line_chart::, and area_chart::.
+6. Do not omit any information from human's question when instructing sparkify.
+7. Do not ask ANY excess information from human without making sure it cannot be answered by the dataframe.
+8. Sometimes human might not explain the question properly, you may ask for clarification if needed.
+9. DO NOT MENTION 'scratch.csv'. Refer to scratch.csv as 'Scratch' in your responses.
 """
         return systemn_prompt
     
@@ -113,14 +116,17 @@ When instructing sparkify tool, you must use the following rules:
             if not spark:
                 spark = SparkSession.builder.getOrCreate()
                 st.session_state.spark = spark
-        res = self.conversational_agent_executor.invoke(
-            {
-                "input": user_input,
-            },
-            {"configurable": {"session_id": "streamlit-llm-session"}},
-        )['output']
-        progress.progress(80, "Putting things together...")
-        # Read the temp dataframe and save it in session state after Sparkify operation
-        st.session_state.scratch_df = spark.read.csv("scratch.csv", header=True, inferSchema=True)
-        progress.progress(100, "Done!") 
-        return res
+        try:
+            res = self.conversational_agent_executor.invoke(
+                {
+                    "input": user_input,
+                },
+                {"configurable": {"session_id": "streamlit-llm-session"}},
+            )['output']
+            progress.progress(80, "Putting things together...")
+            # Read the temp dataframe and save it in session state after Sparkify operation
+            st.session_state.scratch_df = spark.read.csv("scratch.csv", header=True, inferSchema=True)
+            progress.progress(100, "Done!")
+            return res
+        except Exception:
+            return "Oops, something went wrong."

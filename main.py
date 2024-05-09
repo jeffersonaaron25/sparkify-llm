@@ -57,6 +57,8 @@ st.title("SparkifyLLM")
 # Initialize session state
 if 'chat_history' not in st.session_state:
     st.session_state.chat_history = []
+if 'chart_history' not in st.session_state:
+    st.session_state.chart_history = {}
 if 'file_path' not in st.session_state:
     st.session_state.file_path = None
 if 'turn' not in st.session_state:
@@ -109,7 +111,7 @@ if "df" in st.session_state and st.session_state.df:
                     st.error('Error saving scratch! If this persists, consider restarting session.')
         
     else:
-        st.sidebar.dataframe(st.session_state.df)
+        st.sidebar.dataframe(st.session_state.df.limit(1000), use_container_width=True)
         st.sidebar.markdown("<p style='text-align: center; color: grey; margin-top: -10px;'>Source</p>", unsafe_allow_html=True)
     
     # initialize the LLM agent
