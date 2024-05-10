@@ -31,13 +31,12 @@ def app(llm):
             chart_data = st.session_state.chart_history[idx]
             chart_data = {key.replace('(', ' ('): value for key, value in chart_data.items()}
 
-
         if chart in ['bar_chart']:
-            st.chat_message(role, avatar=avatar).bar_chart(data=chart_data, x=list(chart_data.keys())[0], y=list(chart_data.keys())[1:])
+            st.chat_message(role, avatar=avatar).bar_chart(data=chart_data, x=list(chart_data.keys())[0], y=list(chart_data.keys())[1:], color="#f35b29")
         if chart in ['line_chart']:
-            st.chat_message(role, avatar=avatar).line_chart(data=chart_data,  x=list(chart_data.keys())[0], y=list(chart_data.keys())[1:])
+            st.chat_message(role, avatar=avatar).line_chart(data=chart_data,  x=list(chart_data.keys())[0], y=list(chart_data.keys())[1:], color="#f35b29")
         if chart in ['area_chart']:
-            st.chat_message(role, avatar=avatar).area_chart(data=chart_data,  x=list(chart_data.keys())[0], y=list(chart_data.keys())[1:])
+            st.chat_message(role, avatar=avatar).area_chart(data=chart_data,  x=list(chart_data.keys())[0], y=list(chart_data.keys())[1:], color="#f35b29")
 
     if 'turn' not in st.session_state:
         st.session_state.turn = 0
